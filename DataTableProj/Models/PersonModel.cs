@@ -11,7 +11,7 @@ namespace DataTableProj.Models
     /// </summary>
     [Serializable]
     [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
-    public class PersonModel : INotifyPropertyChanged
+    public class PersonModel : INotifyPropertyChanged, ICloneable
     {
         /// <summary>
         /// First name of person.
@@ -78,6 +78,12 @@ namespace DataTableProj.Models
                     this.OnPropertyChanged(nameof(this.LastName));
                 }
             }
+        }
+
+        /// <inheritdoc />
+        public object Clone()
+        {
+            return new PersonModel(this._firstName, this._lastName);
         }
 
         /// <summary>

@@ -19,8 +19,7 @@ namespace DataTableProj.ViewModels
         public MainPageViewModel()
         {
             this.AddPersonCommand = new RelayCommand(async execute => await this.AddUserAsync());
-
-            this.DeletePersonCommand = new RelayCommand(execute => this.RemovePerson(execute));
+            this.RemovePersonCommand = new RelayCommand(execute => this.RemovePerson(execute));
 
             this.Model = new MainPageModel();
         }
@@ -38,14 +37,14 @@ namespace DataTableProj.ViewModels
         /// <summary>
         /// Gets command for deleting user.
         /// </summary>
-        public RelayCommand DeletePersonCommand { get; }
+        public RelayCommand RemovePersonCommand { get; }
 
         /// <summary>
         /// Method for adding person to list.
         /// </summary>
         private async Task AddUserAsync()
         {
-            if (this.Model.Person.FirstName is null || this.Model.Person.LastName is null)
+            if (string.IsNullOrWhiteSpace(this.Model.Person.FirstName) || string.IsNullOrWhiteSpace(this.Model.Person.LastName))
             {
                 var dialog = new ContentDialog
                 {
@@ -59,10 +58,14 @@ namespace DataTableProj.ViewModels
                 return;
             }
 
-            this.Model.Persons.Add(this.Model.Person);
+            var newPerson = this.Model.Person.Clone() as PersonModel;
+
+            this.Model.Persons.Add(newPerson);
 
             this.Model.Person.FirstName = string.Empty;
             this.Model.Person.LastName = string.Empty;
+
+            Console.WriteLine(this.Model.Persons.Count);
         }
 
         /// <summary>

@@ -47,7 +47,7 @@ namespace DataTableProj
 
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
                 {
-                    this.SaveAppState();
+                    this.LoadAppState();
                 }
 
                 // Place the frame in the current Window
@@ -90,7 +90,7 @@ namespace DataTableProj
         {
             var deferral = e.SuspendingOperation.GetDeferral();
 
-            this.LoadAppState();
+            this.SaveAppState();
 
             deferral.Complete();
         }
