@@ -3,7 +3,10 @@
 namespace DataTableProj
 {
     using System;
+    using System.Diagnostics;
+    using System.IO;
     using System.Threading.Tasks;
+    using DataTableProj.Models;
     using DataTableProj.Services.Serializers;
     using DataTableProj.ViewModels;
     using Windows.ApplicationModel;
@@ -102,40 +105,33 @@ namespace DataTableProj
         /// </summary>
         private async Task SaveAppState()
         {
-            var frame = Window.Current.Content as Frame;
-
-            if (frame is null)
+            try
             {
-                return;
-            }
+                var frame = (Frame)Window.Current.Content;
 
-            var view = frame.Content as MainPageView;
+                var view = (MainPageView)frame.Content;
 
-            if (view is null)
-            {
-                return;
-            }
+                var viewModel = (MainPageViewModel)view.DataContext;
 
-            var viewModel = view.DataContext as MainPageViewModel;
+                var serializer = new JsonSerializerService();
 
-            if (viewModel is null)
-            {
-                return;
-            }
-
-            var model = viewModel.Model;
-
-            if (model is null)
-            {
-                return;
-            }
-
-            using (var serializer = new JsonSerializerService())
-            {
                 var localFolder = ApplicationData.Current.LocalFolder;
+
                 var saveFile = await localFolder.CreateFileAsync(SaveFileName, CreationCollisionOption.ReplaceExisting);
 
-                await serializer.Serialize(model, saveFile);
+                await serializer.Serialize(viewModel.Model, saveFile);
+            }
+            catch (NullReferenceException ex)
+            {
+                Trace.WriteLine($"Error occured, when tried to access object: {ex.Message}");
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                Trace.WriteLine($"Error occured, when loading file: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine($"Error occured: {ex.Message}");
             }
         }
 
@@ -144,22 +140,14 @@ namespace DataTableProj
         /// </summary>
         private async void LoadAppState()
         {
-            var frame = Window.Current.Content as Frame;
-
-            if (frame is null)
+            try
             {
-                return;
-            }
+                var frame = (Frame)Window.Current.Content;
 
-            var view = frame.Content as MainPageView;
+                var view = (MainPageView)frame.Content;
 
-            if (view is null)
-            {
-                return;
-            }
+                var serializer = new JsonSerializerService();
 
-            using (var serializer = new JsonSerializerService())
-            {
                 var localFolder = ApplicationData.Current.LocalFolder;
 
                 var saveFile = await localFolder.GetFileAsync(SaveFileName);
@@ -167,6 +155,18 @@ namespace DataTableProj
                 var model = await serializer.Deserialize(saveFile);
 
                 ((MainPageViewModel)view.DataContext).Model = model;
+            }
+            catch (FileNotFoundException ex)
+            {
+                Trace.WriteLine($"Error occured, when loading file: {ex.Message}");
+            }
+            catch (NullReferenceException ex)
+            {
+                Trace.WriteLine($"Error occured, when tried to access object: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine($"Error occured: {ex.Message}");
             }
         }
     }

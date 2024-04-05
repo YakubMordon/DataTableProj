@@ -15,20 +15,20 @@ namespace DataTableProj.Models
         /// <summary>
         /// First name of person.
         /// </summary>
-        private string _firstName;
+        private string firstName;
 
         /// <summary>
         /// Last name of person.
         /// </summary>
-        private string _lastName;
+        private string lastName;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PersonModel"/> class.
         /// </summary>
         public PersonModel()
         {
-            this._firstName = string.Empty;
-            this._lastName = string.Empty;
+            this.firstName = string.Empty;
+            this.lastName = string.Empty;
         }
 
         /// <summary>
@@ -38,8 +38,8 @@ namespace DataTableProj.Models
         /// <param name="lastName">Last name of person.</param>
         public PersonModel(string firstName, string lastName)
         {
-            this._firstName = firstName;
-            this._lastName = lastName;
+            this.firstName = firstName;
+            this.lastName = lastName;
         }
 
         /// <summary>
@@ -48,12 +48,12 @@ namespace DataTableProj.Models
         [JsonProperty]
         public string FirstName
         {
-            get => this._firstName;
+            get => this.firstName;
             set
             {
-                if (this._firstName != value)
+                if (this.firstName != value)
                 {
-                    this._firstName = value;
+                    this.firstName = value;
                     this.OnPropertyChanged(nameof(this.FirstName));
                 }
             }
@@ -65,12 +65,12 @@ namespace DataTableProj.Models
         [JsonProperty]
         public string LastName
         {
-            get => this._lastName;
+            get => this.lastName;
             set
             {
-                if (this._lastName != value)
+                if (this.lastName != value)
                 {
-                    this._lastName = value;
+                    this.lastName = value;
                     this.OnPropertyChanged(nameof(this.LastName));
                 }
             }
@@ -79,7 +79,7 @@ namespace DataTableProj.Models
         /// <inheritdoc />
         public object Clone()
         {
-            return new PersonModel(this._firstName, this._lastName);
+            return new PersonModel(this.firstName, this.lastName);
         }
     }
 }

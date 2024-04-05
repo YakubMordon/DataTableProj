@@ -128,7 +128,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Helpers\ObservableList.cs" />
     <Compile Include="Services\Helpers\RelayCommand.cs" />
-    <Compile Include="Services\Serializers\ISerializerService.cs" />
     <Compile Include="Services\Serializers\JsonSerializerService.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\MainPageViewModel.cs" />

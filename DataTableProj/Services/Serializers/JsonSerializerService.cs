@@ -11,82 +11,47 @@ namespace DataTableProj.Services.Serializers
     /// <summary>
     /// Service for serializing / deserializing JSON model.
     /// </summary>
-    public class JsonSerializerService : ISerializerService
+    public class JsonSerializerService
     {
         /// <summary>
         /// Settings for JSON serializer.
         /// </summary>
-        private JsonSerializerSettings _settings;
-
-        /// <summary>
-        /// Indicates if object is disposed.
-        /// </summary>
-        private bool _disposed;
+        private readonly JsonSerializerSettings settings;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="JsonSerializerService"/> class.
         /// </summary>
         public JsonSerializerService()
         {
-            this._settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
-
-            this._disposed = false;
+            this.settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Method for deserialization of <see cref="MainPageModel"/>.
+        /// </summary>
+        /// <param name="file">File to read saved app data.</param>
+        /// <returns>Deserialized <see cref="MainPageModel"/>.</returns>
+        /// <exception cref="Exception">Exception thrown, when deserializing isn't successful.</exception>
         public async Task<MainPageModel> Deserialize(StorageFile file)
         {
-            if (this._disposed)
-            {
-                throw new ObjectDisposedException("Exception thrown. Object was disposed.");
-            }
-
             var json = await FileIO.ReadTextAsync(file);
 
-            var model = JsonConvert.DeserializeObject<MainPageModel>(json, this._settings) ?? new MainPageModel();
+            var model = JsonConvert.DeserializeObject<MainPageModel>(json, this.settings) ?? new MainPageModel();
 
             return model;
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Method for serialization of <see cref="MainPageModel"/>.
+        /// </summary>
+        /// <param name="model"><see cref="MainPageModel"/>.</param>
+        /// <param name="file">File, to save app data.</param>
+        /// <returns>Completed Task.</returns>
         public async Task Serialize(MainPageModel model, StorageFile file)
         {
-            if (this._disposed)
-            {
-                throw new ObjectDisposedException("Exception thrown. Object was disposed.");
-            }
-
-            var json = JsonConvert.SerializeObject(model, this._settings);
+            var json = JsonConvert.SerializeObject(model, this.settings);
 
             await FileIO.WriteTextAsync(file, json);
-        }
-
-        /// <summary>
-        /// Releases the unmanaged resources used by the <see cref="JsonSerializerService"/> and optionally releases the managed resources.
-        /// </summary>
-        public void Dispose()
-        {
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Releases the unmanaged resources used by the <see cref="JsonSerializerService"/> and optionally releases the managed resources.
-        /// </summary>
-        /// <param name="disposing">True to release both managed and unmanaged resources; False to release only unmanaged resources.</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (this._disposed)
-            {
-                return;
-            }
-
-            if (disposing)
-            {
-                this._settings = null;
-            }
-
-            this._disposed = true;
         }
     }
 }

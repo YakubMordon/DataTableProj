@@ -16,7 +16,7 @@ namespace DataTableProj.ViewModels
         /// <summary>
         /// Model of Main Page.
         /// </summary>
-        private MainPageModel _model;
+        private MainPageModel model;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainPageViewModel"/> class.
@@ -34,12 +34,12 @@ namespace DataTableProj.ViewModels
         /// </summary>
         public MainPageModel Model
         {
-            get => this._model;
+            get => this.model;
             set
             {
-                if (this._model != value)
+                if (this.model != value)
                 {
-                    this._model = value;
+                    this.model = value;
                     this.OnPropertyChanged(nameof(this.Model));
                 }
             }
@@ -88,9 +88,9 @@ namespace DataTableProj.ViewModels
         /// <param name="sender">Object, which was sent.</param>
         private void RemovePerson(object sender)
         {
-            if (sender is PersonModel model)
+            if (sender is PersonModel person)
             {
-                this.Model.Persons.Remove(model);
+                this.Model.Persons.Remove(person);
             }
         }
     }

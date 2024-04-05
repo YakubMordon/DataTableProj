@@ -17,19 +17,19 @@ namespace DataTableProj.Models
         /// <summary>
         /// List of <see cref="PersonModel"/>.
         /// </summary>
-        private ObservableList<PersonModel> _persons;
+        private ObservableList<PersonModel> persons;
 
         /// <summary>
         /// Person for adding.
         /// </summary>
-        private PersonModel _person;
+        private PersonModel person;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainPageModel"/> class.
         /// </summary>
         public MainPageModel()
         {
-            this._persons = new ObservableList<PersonModel>();
+            this.persons = new ObservableList<PersonModel>();
             this.Person = new PersonModel();
         }
 
@@ -39,7 +39,7 @@ namespace DataTableProj.Models
         [JsonProperty]
         public ObservableList<PersonModel> Persons
         {
-            get => this._persons;
+            get => this.persons;
         }
 
         /// <summary>
@@ -48,12 +48,12 @@ namespace DataTableProj.Models
         [JsonProperty]
         public PersonModel Person
         {
-            get => this._person;
+            get => this.person;
             set
             {
-                if (this._person != value)
+                if (this.person != value)
                 {
-                    this._person = value;
+                    this.person = value;
                     this.OnPropertyChanged(nameof(this.Person));
                 }
             }
