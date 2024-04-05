@@ -3,7 +3,9 @@
 namespace DataTableProj.ViewModels
 {
     using System;
+    using System.ComponentModel;
     using System.Threading.Tasks;
+    using DataTableProj.Extensions;
     using DataTableProj.Models;
     using DataTableProj.Services.Helpers;
     using Windows.UI.Xaml.Controls;
@@ -11,7 +13,7 @@ namespace DataTableProj.ViewModels
     /// <summary>
     /// ViewModel for <see cref="MainPageView"/>.
     /// </summary>
-    public class MainPageViewModel : BaseViewModel
+    public class MainPageViewModel : INotifyPropertyChanged
     {
         /// <summary>
         /// Model of Main Page.
@@ -29,6 +31,9 @@ namespace DataTableProj.ViewModels
             this.Model = new MainPageModel();
         }
 
+        /// <inheritdoc/>
+        public event PropertyChangedEventHandler PropertyChanged;
+
         /// <summary>
         /// Gets or sets model of Main Page.
         /// </summary>
@@ -40,7 +45,7 @@ namespace DataTableProj.ViewModels
                 if (this.model != value)
                 {
                     this.model = value;
-                    this.OnPropertyChanged(nameof(this.Model));
+                    this.NotifyPropertyChanged(this.PropertyChanged);
                 }
             }
         }

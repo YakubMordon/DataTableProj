@@ -3,6 +3,8 @@
 namespace DataTableProj.Models
 {
     using System;
+    using System.ComponentModel;
+    using DataTableProj.Extensions;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -10,7 +12,7 @@ namespace DataTableProj.Models
     /// </summary>
     [Serializable]
     [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
-    public class PersonModel : BaseModel, ICloneable
+    public class PersonModel : INotifyPropertyChanged, ICloneable
     {
         /// <summary>
         /// First name of person.
@@ -42,6 +44,9 @@ namespace DataTableProj.Models
             this.lastName = lastName;
         }
 
+        /// <inheritdoc/>
+        public event PropertyChangedEventHandler PropertyChanged;
+
         /// <summary>
         /// Gets or sets first name of person.
         /// </summary>
@@ -54,7 +59,7 @@ namespace DataTableProj.Models
                 if (this.firstName != value)
                 {
                     this.firstName = value;
-                    this.OnPropertyChanged(nameof(this.FirstName));
+                    this.NotifyPropertyChanged(this.PropertyChanged);
                 }
             }
         }
@@ -71,7 +76,7 @@ namespace DataTableProj.Models
                 if (this.lastName != value)
                 {
                     this.lastName = value;
-                    this.OnPropertyChanged(nameof(this.LastName));
+                    this.NotifyPropertyChanged(this.PropertyChanged);
                 }
             }
         }

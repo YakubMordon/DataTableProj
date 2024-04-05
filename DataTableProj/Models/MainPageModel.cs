@@ -3,6 +3,8 @@
 namespace DataTableProj.Models
 {
     using System;
+    using System.ComponentModel;
+    using DataTableProj.Extensions;
     using DataTableProj.Services.Helpers;
     using DataTableProj.ViewModels;
     using Newtonsoft.Json;
@@ -12,7 +14,7 @@ namespace DataTableProj.Models
     /// </summary>
     [Serializable]
     [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
-    public class MainPageModel : BaseModel
+    public class MainPageModel : INotifyPropertyChanged
     {
         /// <summary>
         /// List of <see cref="PersonModel"/>.
@@ -32,6 +34,9 @@ namespace DataTableProj.Models
             this.persons = new ObservableList<PersonModel>();
             this.Person = new PersonModel();
         }
+
+        /// <inheritdoc/>
+        public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
         /// Gets list of <see cref="PersonModel"/>.
@@ -54,7 +59,7 @@ namespace DataTableProj.Models
                 if (this.person != value)
                 {
                     this.person = value;
-                    this.OnPropertyChanged(nameof(this.Person));
+                    this.NotifyPropertyChanged(this.PropertyChanged);
                 }
             }
         }
