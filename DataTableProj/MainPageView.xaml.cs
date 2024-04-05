@@ -2,6 +2,7 @@
 
 namespace DataTableProj
 {
+    using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
 
     /// <summary>
@@ -16,7 +17,7 @@ namespace DataTableProj
         {
             this.InitializeComponent();
 
-            this.DataContext = this.Resources["ViewModel"];
+            this.DataContext = Application.Current.Resources["ViewModel"];
         }
     }
 }

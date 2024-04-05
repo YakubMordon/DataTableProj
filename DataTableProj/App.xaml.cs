@@ -3,6 +3,7 @@
 namespace DataTableProj
 {
     using System;
+    using System.Threading.Tasks;
     using DataTableProj.Services.Serializers;
     using DataTableProj.ViewModels;
     using Windows.ApplicationModel;
@@ -17,6 +18,11 @@ namespace DataTableProj
     /// </summary>
     public sealed partial class App : Application
     {
+        /// <summary>
+        /// Save file name, of last state in app.
+        /// </summary>
+        private const string SaveFileName = "saveFile.json";
+
         /// <summary>
         /// Initializes a new instance of the <see cref="App"/> class. This is the first line of executed
         /// code for the application, so it is the logical equivalent of main() or WinMain().
@@ -45,11 +51,6 @@ namespace DataTableProj
 
                 rootFrame.NavigationFailed += this.OnNavigationFailed;
 
-                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
-                {
-                    this.LoadAppState();
-                }
-
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;
             }
@@ -62,6 +63,7 @@ namespace DataTableProj
                     // configuring the new page by passing required information as a navigation
                     // parameter
                     rootFrame.Navigate(typeof(MainPageView), e.Arguments);
+                    this.LoadAppState();
                 }
 
                 // Ensure the current window is active
@@ -86,11 +88,11 @@ namespace DataTableProj
         /// </summary>
         /// <param name="sender">The source of the suspending request.</param>
         /// <param name="e">Details about the suspending request.</param>
-        private void OnSuspending(object sender, SuspendingEventArgs e)
+        private async void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
 
-            this.SaveAppState();
+            await this.SaveAppState();
 
             deferral.Complete();
         }
@@ -98,10 +100,8 @@ namespace DataTableProj
         /// <summary>
         /// Method for saving app state.
         /// </summary>
-        private void SaveAppState()
+        private async Task SaveAppState()
         {
-            var localSettings = ApplicationData.Current.LocalSettings;
-
             var frame = Window.Current.Content as Frame;
 
             if (frame is null)
@@ -125,44 +125,48 @@ namespace DataTableProj
 
             var model = viewModel.Model;
 
-            if (model != null)
+            if (model is null)
             {
-                var serializer = new JsonSerializerService();
-                var json = serializer.Serialize(model);
-                localSettings.Values["AppState"] = json;
+                return;
+            }
+
+            using (var serializer = new JsonSerializerService())
+            {
+                var localFolder = ApplicationData.Current.LocalFolder;
+                var saveFile = await localFolder.CreateFileAsync(SaveFileName, CreationCollisionOption.ReplaceExisting);
+
+                await serializer.Serialize(model, saveFile);
             }
         }
 
         /// <summary>
-        /// Methid for loading app state.
+        /// Method for loading app state.
         /// </summary>
-        private void LoadAppState()
+        private async void LoadAppState()
         {
-            var localSettings = ApplicationData.Current.LocalSettings;
+            var frame = Window.Current.Content as Frame;
 
-            if (localSettings.Values.ContainsKey("AppState"))
+            if (frame is null)
             {
-                var json = localSettings.Values["AppState"].ToString();
+                return;
+            }
 
-                var serializer = new JsonSerializerService();
+            var view = frame.Content as MainPageView;
 
-                var model = serializer.Deserialize(json);
+            if (view is null)
+            {
+                return;
+            }
 
-                var frame = Window.Current.Content as Frame;
+            using (var serializer = new JsonSerializerService())
+            {
+                var localFolder = ApplicationData.Current.LocalFolder;
 
-                if (frame is null)
-                {
-                    return;
-                }
+                var saveFile = await localFolder.GetFileAsync(SaveFileName);
 
-                var view = frame.Content as MainPageView;
+                var model = await serializer.Deserialize(saveFile);
 
-                if (view is null)
-                {
-                    return;
-                }
-
-                view.DataContext = model;
+                ((MainPageViewModel)view.DataContext).Model = model;
             }
         }
     }

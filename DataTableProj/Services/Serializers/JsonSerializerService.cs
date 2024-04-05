@@ -3,8 +3,10 @@
 namespace DataTableProj.Services.Serializers
 {
     using System;
+    using System.Threading.Tasks;
     using DataTableProj.Models;
     using Newtonsoft.Json;
+    using Windows.Storage;
 
     /// <summary>
     /// Service for serializing / deserializing JSON model.
@@ -32,12 +34,14 @@ namespace DataTableProj.Services.Serializers
         }
 
         /// <inheritdoc/>
-        public MainPageModel Deserialize(string json)
+        public async Task<MainPageModel> Deserialize(StorageFile file)
         {
             if (this._disposed)
             {
                 throw new ObjectDisposedException("Exception thrown. Object was disposed.");
             }
+
+            var json = await FileIO.ReadTextAsync(file);
 
             var model = JsonConvert.DeserializeObject<MainPageModel>(json, this._settings) ?? new MainPageModel();
 
@@ -45,7 +49,7 @@ namespace DataTableProj.Services.Serializers
         }
 
         /// <inheritdoc/>
-        public string Serialize(MainPageModel model)
+        public async Task Serialize(MainPageModel model, StorageFile file)
         {
             if (this._disposed)
             {
@@ -54,7 +58,7 @@ namespace DataTableProj.Services.Serializers
 
             var json = JsonConvert.SerializeObject(model, this._settings);
 
-            return json;
+            await FileIO.WriteTextAsync(file, json);
         }
 
         /// <summary>

@@ -11,8 +11,13 @@ namespace DataTableProj.ViewModels
     /// <summary>
     /// ViewModel for <see cref="MainPageView"/>.
     /// </summary>
-    public class MainPageViewModel
+    public class MainPageViewModel : BaseViewModel
     {
+        /// <summary>
+        /// Model of Main Page.
+        /// </summary>
+        private MainPageModel _model;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MainPageViewModel"/> class.
         /// </summary>
@@ -27,7 +32,18 @@ namespace DataTableProj.ViewModels
         /// <summary>
         /// Gets or sets model of Main Page.
         /// </summary>
-        public MainPageModel Model { get; set; }
+        public MainPageModel Model
+        {
+            get => this._model;
+            set
+            {
+                if (this._model != value)
+                {
+                    this._model = value;
+                    this.OnPropertyChanged(nameof(this.Model));
+                }
+            }
+        }
 
         /// <summary>
         /// Gets command for adding user.
@@ -64,8 +80,6 @@ namespace DataTableProj.ViewModels
 
             this.Model.Person.FirstName = string.Empty;
             this.Model.Person.LastName = string.Empty;
-
-            Console.WriteLine(this.Model.Persons.Count);
         }
 
         /// <summary>
