@@ -8,10 +8,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C95DC588-AFC2-4B0C-A921-0E314137EF66}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Элементы решения", "Элементы решения", "{C15B8023-853D-40B7-88B1-7491BFE4DBC7}"
-	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
 	EndProjectSection
 EndProject

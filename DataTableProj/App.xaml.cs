@@ -5,10 +5,12 @@ namespace DataTableProj
     using System;
     using System.Diagnostics;
     using System.IO;
+    using System.Reflection;
     using System.Threading.Tasks;
     using DataTableProj.Models;
     using DataTableProj.Services.Serializers;
     using DataTableProj.ViewModels;
+    using Newtonsoft.Json;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
     using Windows.Storage;
@@ -113,11 +115,11 @@ namespace DataTableProj
 
                 var viewModel = (MainPageViewModel)view.DataContext;
 
-                var serializer = new JsonSerializerService();
-
                 var localFolder = ApplicationData.Current.LocalFolder;
 
                 var saveFile = await localFolder.CreateFileAsync(SaveFileName, CreationCollisionOption.ReplaceExisting);
+
+                var serializer = new JsonSerializerService();
 
                 await serializer.Serialize(viewModel.Model, saveFile);
             }
@@ -146,15 +148,13 @@ namespace DataTableProj
 
                 var view = (MainPageView)frame.Content;
 
-                var serializer = new JsonSerializerService();
-
                 var localFolder = ApplicationData.Current.LocalFolder;
 
                 var saveFile = await localFolder.GetFileAsync(SaveFileName);
 
-                var model = await serializer.Deserialize(saveFile);
+                var serializer = new JsonSerializerService();
 
-                ((MainPageViewModel)view.DataContext).Model = model;
+                ((MainPageViewModel)view.DataContext).Model = await serializer.Deserialize(saveFile);
             }
             catch (FileNotFoundException ex)
             {
