@@ -119,17 +119,21 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Extensions\NotifyPropertyChangedExtensions.cs" />
+    <Compile Include="BaseClasses\BaseNotifyPropertyChanged.cs" />
     <Compile Include="MainPageView.xaml.cs">
       <DependentUpon>MainPageView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\MainPageModel.cs" />
     <Compile Include="Models\PersonModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Services\Helpers\ObservableList.cs" />
     <Compile Include="Services\Helpers\RelayCommand.cs" />
     <Compile Include="Services\Serializers\JsonSerializerService.cs" />
     <Compile Include="ViewModels\MainPageViewModel.cs" />
+    <Compile Include="Views\ContentDialogs\DeleteConfirmationDialog.xaml.cs">
+      <DependentUpon>DeleteConfirmationDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\UserControls\AddPersonForm.xaml.cs">
       <DependentUpon>AddPersonForm.xaml</DependentUpon>
     </Compile>
@@ -165,7 +169,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ResourceDictionaries\TableGridStyles.xaml">
+    <Page Include="Views\ContentDialogs\DeleteConfirmationDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -3,8 +3,7 @@
 namespace DataTableProj.Models
 {
     using System;
-    using System.ComponentModel;
-    using DataTableProj.Extensions;
+    using DataTableProj.BaseClasses;
     using DataTableProj.Services.Helpers;
     using DataTableProj.ViewModels;
     using Newtonsoft.Json;
@@ -14,12 +13,17 @@ namespace DataTableProj.Models
     /// </summary>
     [Serializable]
     [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
-    public class MainPageModel : INotifyPropertyChanged
+    public class MainPageModel : BaseNotifyPropertyChanged
     {
         /// <summary>
         /// List of <see cref="PersonModel"/>.
         /// </summary>
         private ObservableList<PersonModel> persons;
+
+        /// <summary>
+        /// List of <see cref="PersonModel"/> in edit mode.
+        /// </summary>
+        private ObservableList<PersonModel> editablePersons;
 
         /// <summary>
         /// Person for adding.
@@ -32,11 +36,9 @@ namespace DataTableProj.Models
         public MainPageModel()
         {
             this.persons = new ObservableList<PersonModel>();
+            this.editablePersons = new ObservableList<PersonModel>();
             this.Person = new PersonModel();
         }
-
-        /// <inheritdoc/>
-        public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
         /// Gets list of <see cref="PersonModel"/>.
@@ -45,6 +47,15 @@ namespace DataTableProj.Models
         public ObservableList<PersonModel> Persons
         {
             get => this.persons;
+        }
+
+        /// <summary>
+        /// Gets list of <see cref="PersonModel"/> in edit mode.
+        /// </summary>
+        [JsonProperty]
+        public ObservableList<PersonModel> EditablePersons
+        {
+            get => this.editablePersons;
         }
 
         /// <summary>
@@ -59,7 +70,7 @@ namespace DataTableProj.Models
                 if (this.person != value)
                 {
                     this.person = value;
-                    this.NotifyPropertyChanged(this.PropertyChanged);
+                    this.NotifyPropertyChanged();
                 }
             }
         }

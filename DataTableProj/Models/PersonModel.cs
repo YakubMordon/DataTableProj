@@ -3,8 +3,8 @@
 namespace DataTableProj.Models
 {
     using System;
-    using System.ComponentModel;
-    using DataTableProj.Extensions;
+    using System.Runtime.Serialization;
+    using DataTableProj.BaseClasses;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -12,7 +12,7 @@ namespace DataTableProj.Models
     /// </summary>
     [Serializable]
     [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
-    public class PersonModel : INotifyPropertyChanged, ICloneable
+    public class PersonModel : BaseNotifyPropertyChanged, ICloneable
     {
         /// <summary>
         /// First name of person.
@@ -23,6 +23,11 @@ namespace DataTableProj.Models
         /// Last name of person.
         /// </summary>
         private string lastName;
+
+        /// <summary>
+        /// Value indicating whether person is now available for editing or not.
+        /// </summary>
+        private bool isEditing = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PersonModel"/> class.
@@ -44,8 +49,11 @@ namespace DataTableProj.Models
             this.lastName = lastName;
         }
 
-        /// <inheritdoc/>
-        public event PropertyChangedEventHandler PropertyChanged;
+        /// <summary>
+        /// Gets or sets id of person.
+        /// </summary>
+        [JsonProperty]
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         /// <summary>
         /// Gets or sets first name of person.
@@ -59,7 +67,7 @@ namespace DataTableProj.Models
                 if (this.firstName != value)
                 {
                     this.firstName = value;
-                    this.NotifyPropertyChanged(this.PropertyChanged);
+                    this.NotifyPropertyChanged();
                 }
             }
         }
@@ -76,15 +84,53 @@ namespace DataTableProj.Models
                 if (this.lastName != value)
                 {
                     this.lastName = value;
-                    this.NotifyPropertyChanged(this.PropertyChanged);
+                    this.NotifyPropertyChanged();
                 }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether person is now available for editing or not.
+        /// </summary>
+        [JsonProperty]
+        public bool IsEditing
+        {
+            get => this.isEditing;
+            set
+            {
+                this.isEditing = value;
+                this.NotifyPropertyChanged();
             }
         }
 
         /// <inheritdoc />
         public object Clone()
         {
-            return new PersonModel(this.firstName, this.lastName);
+            return new PersonModel
+            {
+                Id = this.Id,
+                FirstName = this.FirstName,
+                LastName = this.LastName,
+                IsEditing = this.isEditing,
+            };
+        }
+
+        [OnSerializing]
+        private void OnSerializing(StreamingContext context)
+        {
+            if (this.isEditing == null)
+            {
+                this.IsEditing = false;
+            }
+        }
+
+        [OnDeserialized]
+        private void OnDeserializing(StreamingContext context)
+        {
+            if (this.isEditing == null)
+            {
+                this.IsEditing = false;
+            }
         }
     }
 }

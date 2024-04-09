@@ -4,21 +4,54 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="using:DataTableProj.Services.Converters"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
+    <UserControl.Resources>
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </UserControl.Resources>
     <Grid>
         <controls:DataGrid AutoGenerateColumns="False" IsReadOnly="False" ItemsSource="{Binding Model.Persons}">
             <controls:DataGrid.Columns>
-                <controls:DataGridTextColumn Header="First Name" Binding="{Binding FirstName, Mode=TwoWay}" />
-                <controls:DataGridTextColumn Header="Last Name" Binding="{Binding LastName, Mode=TwoWay}" />
+                <controls:DataGridTemplateColumn Header="First Name">
+                    <controls:DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding FirstName, Mode=TwoWay}" 
+                                     IsEnabled="{Binding IsEditing}"/>
+                        </DataTemplate>
+                    </controls:DataGridTemplateColumn.CellTemplate>
+                </controls:DataGridTemplateColumn>
+
+                <controls:DataGridTemplateColumn Header="Last Name">
+                    <controls:DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding LastName, Mode=TwoWay}"
+                                     IsEnabled="{Binding IsEditing}"/>
+                        </DataTemplate>
+                    </controls:DataGridTemplateColumn.CellTemplate>
+                </controls:DataGridTemplateColumn>
+
                 <controls:DataGridTemplateColumn Header="Actions">
                     <controls:DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="Delete" Style="{StaticResource ColumnButtonStyle}"
-                                    Command="{Binding RemovePersonCommand, Source={StaticResource ViewModel}}"
-                                    CommandParameter="{Binding}" />
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="Edit" Command="{Binding EditPersonCommand, Source={StaticResource ViewModel}}" 
+                                        CommandParameter="{Binding}" 
+                                        Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Inverse}" />
+
+                                <Button Content="Save Changes" Command="{Binding SaveChangesCommand, Source={StaticResource ViewModel}}"
+                                        CommandParameter="{Binding}" 
+                                        Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                                <Button Content="Discard" Command="{Binding DiscardChangesCommand, Source={StaticResource ViewModel}}" 
+                                        CommandParameter="{Binding}" 
+                                        Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                                <Button Content="Delete" Command="{Binding RemovePersonCommand, Source={StaticResource ViewModel}}" 
+                                        CommandParameter="{Binding}" />
+                            </StackPanel>
                         </DataTemplate>
                     </controls:DataGridTemplateColumn.CellTemplate>
                 </controls:DataGridTemplateColumn>
