@@ -6,6 +6,7 @@ namespace DataTableProj.Services.Serializers
     using System.Threading.Tasks;
     using DataTableProj.Models;
     using Newtonsoft.Json;
+    using Serilog;
     using Windows.Storage;
 
     /// <summary>
@@ -34,9 +35,13 @@ namespace DataTableProj.Services.Serializers
         /// <exception cref="Exception">Exception thrown, when deserializing isn't successful.</exception>
         public async Task<MainPageModel> Deserialize(StorageFile file)
         {
+            Log.Information("Deserializing content of file: {file}", file);
+
             var json = await FileIO.ReadTextAsync(file);
 
             var model = JsonConvert.DeserializeObject<MainPageModel>(json, this.settings) ?? new MainPageModel();
+
+            Log.Information("Deserialized model: {model}", model);
 
             return model;
         }
@@ -49,7 +54,12 @@ namespace DataTableProj.Services.Serializers
         /// <returns>Completed Task.</returns>
         public async Task Serialize(MainPageModel model, StorageFile file)
         {
+            Log.Information("Model for serialization: {model}", model);
+            Log.Information("Serializing file: {file}", file);
+
             var json = JsonConvert.SerializeObject(model, this.settings);
+
+            Log.Information("Serialized model: {json}", json);
 
             await FileIO.WriteTextAsync(file, json);
         }

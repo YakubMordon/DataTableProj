@@ -1,6 +1,9 @@
-﻿namespace DataTableProj.Services.Converters
+﻿// Copyright (c) Digital Cloud Technologies. All rights reserved.
+
+namespace DataTableProj.Services.Converters
 {
     using System;
+    using Serilog;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Data;
 
@@ -19,6 +22,8 @@
         /// <returns>Visible if the value is true; Collapsed if the value is false.</returns>
         public object Convert(object value, Type targetType, object parameter, string language)
         {
+            Log.Information("Converting value: {value}", value);
+
             var visibility = Visibility.Collapsed;
 
             if (value is bool boolValue)
@@ -33,6 +38,8 @@
                     visibility = Visibility.Visible;
                 }
             }
+
+            Log.Information("Visibility for return: {visibility}", visibility);
 
             return visibility;
         }

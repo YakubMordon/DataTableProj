@@ -3,14 +3,11 @@
 namespace DataTableProj
 {
     using System;
-    using System.Diagnostics;
     using System.IO;
-    using System.Reflection;
     using System.Threading.Tasks;
-    using DataTableProj.Models;
     using DataTableProj.Services.Serializers;
     using DataTableProj.ViewModels;
-    using Newtonsoft.Json;
+    using Serilog;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
     using Windows.Storage;
@@ -34,6 +31,12 @@ namespace DataTableProj
         /// </summary>
         public App()
         {
+            var logFilePath = Path.Combine(ApplicationData.Current.LocalFolder.Path, "log.txt");
+
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.File(logFilePath)
+                .CreateLogger();
+
             this.InitializeComponent();
             this.Suspending += this.OnSuspending;
         }
@@ -45,6 +48,8 @@ namespace DataTableProj
         /// <param name="e">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
+            Log.Debug("Launching application...");
+
             var rootFrame = Window.Current.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,
@@ -74,6 +79,8 @@ namespace DataTableProj
                 // Ensure the current window is active
                 Window.Current.Activate();
             }
+
+            Log.Information("Application was successfully launched.");
         }
 
         /// <summary>
@@ -95,11 +102,15 @@ namespace DataTableProj
         /// <param name="e">Details about the suspending request.</param>
         private async void OnSuspending(object sender, SuspendingEventArgs e)
         {
+            Log.Information("Suspending application...");
+
             var deferral = e.SuspendingOperation.GetDeferral();
 
             await this.SaveAppState();
 
             deferral.Complete();
+
+            Log.Information("Application was successfully suspended.");
         }
 
         /// <summary>
@@ -107,6 +118,8 @@ namespace DataTableProj
         /// </summary>
         private async Task SaveAppState()
         {
+            Log.Information("Saving application state...");
+
             try
             {
                 var frame = (Frame)Window.Current.Content;
@@ -122,18 +135,20 @@ namespace DataTableProj
                 var serializer = new JsonSerializerService();
 
                 await serializer.Serialize(viewModel.Model, saveFile);
+
+                Log.Information("Application state was successfully saved.");
             }
             catch (NullReferenceException ex)
             {
-                Trace.WriteLine($"Error occured, when tried to access object: {ex.Message}");
+                Log.Error("Error occured, when tried to access object: {Message}", ex.Message);
             }
             catch (UnauthorizedAccessException ex)
             {
-                Trace.WriteLine($"Error occured, when loading file: {ex.Message}");
+                Log.Error("Error occured, when loading file: {Message}", ex.Message);
             }
             catch (Exception ex)
             {
-                Trace.WriteLine($"Error occured: {ex.Message}");
+                Log.Error("Error occured: {Message}", ex.Message);
             }
         }
 
@@ -142,6 +157,8 @@ namespace DataTableProj
         /// </summary>
         private async void LoadAppState()
         {
+            Log.Information("Loading application state...");
+
             try
             {
                 var frame = (Frame)Window.Current.Content;
@@ -158,15 +175,15 @@ namespace DataTableProj
             }
             catch (FileNotFoundException ex)
             {
-                Trace.WriteLine($"Error occured, when loading file: {ex.Message}");
+                Log.Error("Error occured, when loading file: {Message}", ex.Message);
             }
             catch (NullReferenceException ex)
             {
-                Trace.WriteLine($"Error occured, when tried to access object: {ex.Message}");
+                Log.Error("Error occured, when tried to access object: {Message}", ex.Message);
             }
             catch (Exception ex)
             {
-                Trace.WriteLine($"Error occured: {ex.Message}");
+                Log.Error("Error occured: {Message}", ex.Message);
             }
         }
     }

@@ -1,15 +1,15 @@
 ﻿// Copyright (c) Digital Cloud Technologies. All rights reserved.
 
-using System.Linq;
-
 namespace DataTableProj.ViewModels
 {
     using System;
+    using System.Linq;
     using System.Threading.Tasks;
     using DataTableProj.BaseClasses;
     using DataTableProj.Models;
     using DataTableProj.Services.Helpers;
     using DataTableProj.Views.ContentDialogs;
+    using Serilog;
     using Windows.UI.Xaml.Controls;
 
     /// <summary>
@@ -84,6 +84,8 @@ namespace DataTableProj.ViewModels
         {
             if (string.IsNullOrWhiteSpace(this.Model.Person.FirstName) || string.IsNullOrWhiteSpace(this.Model.Person.LastName))
             {
+                Log.Information("First name or Last name were empty:\nFirstName: {FirstName}\n\nLastName: {LastName}", this.Model.Person.FirstName, this.Model.Person.LastName);
+
                 var dialog = new ContentDialog
                 {
                     Title = "Error",
@@ -96,12 +98,16 @@ namespace DataTableProj.ViewModels
                 return;
             }
 
+            Log.Information("Adding user...");
+
             var newPerson = this.Model.Person.Clone() as PersonModel;
 
             this.Model.Persons.Add(newPerson);
 
             this.Model.Person.FirstName = string.Empty;
             this.Model.Person.LastName = string.Empty;
+
+            Log.Information("User added: {newPerson}", newPerson);
         }
 
         /// <summary>
@@ -110,12 +116,15 @@ namespace DataTableProj.ViewModels
         /// <param name="sender">Object, which was sent.</param>
         private async Task RemovePersonAsync(object sender)
         {
+            Log.Information("Removing person...");
+
             if (sender is PersonModel person)
             {
-                Console.WriteLine(person);
-
                 var dialog = new DeleteConfirmationDialog(() => this.Model.Persons.Remove(person));
+
                 await dialog.ShowAsync();
+
+                Log.Information("Person removed: {person}", person);
             }
         }
 
@@ -125,6 +134,8 @@ namespace DataTableProj.ViewModels
         /// <param name="sender">Object, which was sent.</param>
         private void EditPerson(object sender)
         {
+            Log.Information("Enabling Edit Mode for row...");
+
             if (sender is PersonModel person)
             {
                 person.IsEditing = true;
@@ -132,6 +143,8 @@ namespace DataTableProj.ViewModels
                 var clonedPerson = person.Clone() as PersonModel;
 
                 this.model.EditablePersons.Add(clonedPerson);
+
+                Log.Information("Edit mode activated for person: {person}", person);
             }
         }
 
@@ -141,6 +154,8 @@ namespace DataTableProj.ViewModels
         /// <param name="sender">Object, which was sent.</param>
         private void SaveChanges(object sender)
         {
+            Log.Information("Saving changes...");
+
             if (sender is PersonModel person)
             {
                 person.IsEditing = false;
@@ -148,6 +163,8 @@ namespace DataTableProj.ViewModels
                 var index = this.model.EditablePersons.FindIndex(editablePerson => editablePerson.Id == person.Id);
 
                 this.model.EditablePersons.RemoveAt(index);
+
+                Log.Information("Saved person: {person}", person);
             }
         }
 
@@ -157,14 +174,20 @@ namespace DataTableProj.ViewModels
         /// <param name="sender">Object, which was sent.</param>
         private void DiscardChanges(object sender)
         {
+            Log.Information("Discarding changes...");
+
             if (sender is PersonModel discardedPerson)
             {
+                Log.Information("Person for discarding: {discardedPerson}", discardedPerson);
+
                 discardedPerson.IsEditing = false;
 
                 var originalPerson = this.model.EditablePersons.First(person => person.Id == discardedPerson.Id);
 
                 discardedPerson.FirstName = originalPerson.FirstName;
                 discardedPerson.LastName = originalPerson.LastName;
+
+                Log.Information("Person renewed: {originalPerson}", originalPerson);
             }
         }
     }
