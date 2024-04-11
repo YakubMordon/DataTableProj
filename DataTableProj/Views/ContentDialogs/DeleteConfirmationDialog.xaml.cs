@@ -23,6 +23,14 @@ namespace DataTableProj.Views.ContentDialogs
         {
             this.InitializeComponent();
             this.deleteAction = deleteAction ?? throw new ArgumentNullException(nameof(deleteAction));
+
+            this.PrimaryButtonClick += this.OnButtonClick;
+
+            this.SecondaryButtonClick += (sender, args) =>
+            {
+                sender.IsPrimaryButtonEnabled = false;
+                this.OnButtonClick(sender, args);
+            };
         }
 
         /// <summary>
@@ -30,19 +38,13 @@ namespace DataTableProj.Views.ContentDialogs
         /// </summary>
         /// <param name="sender">The <see cref="ContentDialog"/> object that raised the event.</param>
         /// <param name="args">The event data for the button click event.</param>
-        private void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            this.deleteAction();
-            this.Hide();
-        }
+            if (sender.IsPrimaryButtonEnabled)
+            {
+                this.deleteAction();
+            }
 
-        /// <summary>
-        /// Handles the click event of the secondary button (No) to cancel the deletion.
-        /// </summary>
-        /// <param name="sender">The <see cref="ContentDialog"/> object that raised the event.</param>
-        /// <param name="args">The event data for the button click event.</param>
-        private void OnSecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
             this.Hide();
         }
     }

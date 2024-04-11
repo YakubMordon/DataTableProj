@@ -115,15 +115,6 @@ namespace DataTableProj.Models
             };
         }
 
-        [OnSerializing]
-        private void OnSerializing(StreamingContext context)
-        {
-            if (this.isEditing == null)
-            {
-                this.IsEditing = false;
-            }
-        }
-
         [OnDeserialized]
         private void OnDeserializing(StreamingContext context)
         {

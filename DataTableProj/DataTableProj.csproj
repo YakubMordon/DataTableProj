@@ -134,6 +134,9 @@
     <Compile Include="Views\ContentDialogs\DeleteConfirmationDialog.xaml.cs">
       <DependentUpon>DeleteConfirmationDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ContentDialogs\InputErrorDialog.xaml.cs">
+      <DependentUpon>InputErrorDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\UserControls\AddPersonForm.xaml.cs">
       <DependentUpon>AddPersonForm.xaml</DependentUpon>
     </Compile>
@@ -170,6 +173,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ContentDialogs\DeleteConfirmationDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ContentDialogs\InputErrorDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

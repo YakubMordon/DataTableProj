@@ -10,7 +10,6 @@ namespace DataTableProj.ViewModels
     using DataTableProj.Services.Helpers;
     using DataTableProj.Views.ContentDialogs;
     using Serilog;
-    using Windows.UI.Xaml.Controls;
 
     /// <summary>
     /// ViewModel for <see cref="MainPageView"/>.
@@ -86,12 +85,7 @@ namespace DataTableProj.ViewModels
             {
                 Log.Information("First name or Last name were empty:\nFirstName: {FirstName}\n\nLastName: {LastName}", this.Model.Person.FirstName, this.Model.Person.LastName);
 
-                var dialog = new ContentDialog
-                {
-                    Title = "Error",
-                    Content = "Some inputs are empty",
-                    CloseButtonText = "Close",
-                };
+                var dialog = new InputErrorDialog();
 
                 await dialog.ShowAsync();
 
