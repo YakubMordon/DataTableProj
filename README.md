@@ -15,10 +15,14 @@ To start the application, you need to have Windows 10 SDK on your computer and t
 ## Usage
 
 There are five methods to work with person data: Add Person, Remove Person, Edit Person, Save Changes and Discard Changes. 
-Method Add Person adds person using data which you wrote in form. If one of the inputs are null, empty or whitespace, Error will be shown.
-Method Remove Person shows on your screen Dialog Window, which asks you if you confirm deletion of this Person.
-Method Edit Person toggles Row to edit mode, so you will be able to change First Name and Last Name of Person.
-Methods Save Changes and Discard Changes are saving or discarding changes of editing, depending on which button you clicked.
+
+- Method Add Person adds person using data which you wrote in form. If one of the inputs are null, empty or whitespace, Error will be shown.
+
+- Method Remove Person shows on your screen Dialog Window, which asks you if you confirm deletion of this Person.
+
+- Method Edit Person toggles Row to edit mode, so you will be able to change First Name and Last Name of Person.
+
+- Methods Save Changes and Discard Changes are saving or discarding changes of editing, depending on which button you clicked.
 
 ## Features
 
