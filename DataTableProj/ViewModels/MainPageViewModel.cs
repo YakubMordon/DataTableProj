@@ -112,14 +112,13 @@ namespace DataTableProj.ViewModels
         {
             Log.Information("Removing person...");
 
-            if (sender is PersonModel person)
-            {
-                var dialog = new DeleteConfirmationDialog(() => this.Model.Persons.Remove(person));
+            var person = (PersonModel)sender;
 
-                await dialog.ShowAsync();
+            var dialog = new DeleteConfirmationDialog(() => this.Model.Persons.Remove(person));
 
-                Log.Information("Person removed: {person}", person);
-            }
+            await dialog.ShowAsync();
+
+            Log.Information("Person removed: {person}", person);
         }
 
         /// <summary>
@@ -130,16 +129,15 @@ namespace DataTableProj.ViewModels
         {
             Log.Information("Enabling Edit Mode for row...");
 
-            if (sender is PersonModel person)
-            {
-                person.IsEditing = true;
+            var person = (PersonModel)sender;
 
-                var clonedPerson = person.Clone() as PersonModel;
+            person.IsEditing = true;
 
-                this.model.EditablePersons.Add(clonedPerson);
+            var clonedPerson = person.Clone() as PersonModel;
 
-                Log.Information("Edit mode activated for person: {person}", person);
-            }
+            this.model.EditablePersons.Add(clonedPerson);
+
+            Log.Information("Edit mode activated for person: {person}", person);
         }
 
         /// <summary>
@@ -150,16 +148,15 @@ namespace DataTableProj.ViewModels
         {
             Log.Information("Saving changes...");
 
-            if (sender is PersonModel person)
-            {
-                person.IsEditing = false;
+            var person = (PersonModel)sender;
 
-                var index = this.model.EditablePersons.FindIndex(editablePerson => editablePerson.Id == person.Id);
+            person.IsEditing = false;
 
-                this.model.EditablePersons.RemoveAt(index);
+            var index = this.model.EditablePersons.FindIndex(editablePerson => editablePerson.Id == person.Id);
 
-                Log.Information("Saved person: {person}", person);
-            }
+            this.model.EditablePersons.RemoveAt(index);
+
+            Log.Information("Saved person: {person}", person);
         }
 
         /// <summary>
@@ -170,19 +167,18 @@ namespace DataTableProj.ViewModels
         {
             Log.Information("Discarding changes...");
 
-            if (sender is PersonModel discardedPerson)
-            {
-                Log.Information("Person for discarding: {discardedPerson}", discardedPerson);
+            var person = (PersonModel)sender;
 
-                discardedPerson.IsEditing = false;
+            Log.Information("Person for discarding: {person}", person);
 
-                var originalPerson = this.model.EditablePersons.First(person => person.Id == discardedPerson.Id);
+            person.IsEditing = false;
 
-                discardedPerson.FirstName = originalPerson.FirstName;
-                discardedPerson.LastName = originalPerson.LastName;
+            var originalPerson = this.model.EditablePersons.First(editablePerson => editablePerson.Id == person.Id);
 
-                Log.Information("Person renewed: {originalPerson}", originalPerson);
-            }
+            person.FirstName = originalPerson.FirstName;
+            person.LastName = originalPerson.LastName;
+
+            Log.Information("Person renewed: {originalPerson}", originalPerson);
         }
     }
 }

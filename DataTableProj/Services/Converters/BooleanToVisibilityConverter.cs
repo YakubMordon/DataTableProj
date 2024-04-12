@@ -24,24 +24,25 @@ namespace DataTableProj.Services.Converters
         {
             Log.Information("Converting value: {value}", value);
 
-            var visibility = Visibility.Collapsed;
+            var result = Visibility.Collapsed;
 
-            if (value is bool boolValue)
+            var visibility = (bool)value;
+
+            var stringParameter = (string)parameter;
+
+            if (stringParameter.Equals("Inverse"))
             {
-                if (parameter is string stringParameter && stringParameter.Equals("Inverse"))
-                {
-                    boolValue = !boolValue;
-                }
-
-                if (boolValue)
-                {
-                    visibility = Visibility.Visible;
-                }
+                visibility = !visibility;
             }
 
-            Log.Information("Visibility for return: {visibility}", visibility);
+            if (visibility)
+            {
+                result = Visibility.Visible;
+            }
 
-            return visibility;
+            Log.Information("Visibility for return: {result}", result);
+
+            return result;
         }
 
         /// <summary>
