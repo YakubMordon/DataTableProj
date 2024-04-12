@@ -137,12 +137,6 @@
     <Compile Include="Views\ContentDialogs\InputErrorDialog.xaml.cs">
       <DependentUpon>InputErrorDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\UserControls\AddPersonForm.xaml.cs">
-      <DependentUpon>AddPersonForm.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\UserControls\TableDataGrid.xaml.cs">
-      <DependentUpon>TableDataGrid.xaml</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -177,14 +171,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ContentDialogs\InputErrorDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\UserControls\AddPersonForm.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\UserControls\TableDataGrid.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
