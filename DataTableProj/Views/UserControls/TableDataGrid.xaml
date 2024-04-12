@@ -18,8 +18,13 @@
                 <controls:DataGridTemplateColumn Header="First Name">
                     <controls:DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBox Text="{Binding FirstName, Mode=TwoWay}" 
-                                     IsEnabled="{Binding IsEditing}"/>
+                            <Grid>
+                                <TextBlock Text="{Binding FirstName}" VerticalAlignment="Center" Margin="10, 0, 0, 0"
+                                           Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Inverse}"/>
+
+                                <TextBox Text="{Binding FirstName, Mode=TwoWay}" 
+                                         Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            </Grid>
                         </DataTemplate>
                     </controls:DataGridTemplateColumn.CellTemplate>
                 </controls:DataGridTemplateColumn>
@@ -27,8 +32,13 @@
                 <controls:DataGridTemplateColumn Header="Last Name">
                     <controls:DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBox Text="{Binding LastName, Mode=TwoWay}"
-                                     IsEnabled="{Binding IsEditing}"/>
+                            <Grid>
+                                <TextBlock Text="{Binding LastName}" VerticalAlignment="Center" Margin="10, 0, 0, 0"
+                                           Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Inverse}"/>
+
+                                <TextBox Text="{Binding LastName, Mode=TwoWay}"
+                                         Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            </Grid>
                         </DataTemplate>
                     </controls:DataGridTemplateColumn.CellTemplate>
                 </controls:DataGridTemplateColumn>

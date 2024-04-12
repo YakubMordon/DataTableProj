@@ -28,7 +28,7 @@ namespace DataTableProj.Services.Converters
 
             var visibility = (bool)value;
 
-            var stringParameter = (string)parameter;
+            var stringParameter = (string)parameter ?? string.Empty;
 
             if (stringParameter.Equals("Inverse"))
             {
