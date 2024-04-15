@@ -3,49 +3,97 @@
 namespace DataTableProj.ViewModels
 {
     using System;
-    using System.Linq;
     using System.Threading.Tasks;
     using DataTableProj.BaseClasses;
     using DataTableProj.Models;
     using DataTableProj.Services.Helpers;
-    using DataTableProj.Views.ContentDialogs;
+    using Newtonsoft.Json;
     using Serilog;
 
     /// <summary>
     /// ViewModel for <see cref="MainPageView"/>.
     /// </summary>
+    [Serializable]
     public class MainPageViewModel : BaseNotifyPropertyChanged
     {
         /// <summary>
-        /// Model of Main Page.
+        /// Service for handling actions related with <see cref="PersonModel"/>.
         /// </summary>
-        private MainPageModel model;
+        private readonly PersonActionHandler personActionHandler;
+
+        /// <summary>
+        /// List of <see cref="PersonModel"/>.
+        /// </summary>
+        private ObservableList<PersonModel> persons;
+
+        /// <summary>
+        /// List of <see cref="PersonModel"/> in edit mode.
+        /// </summary>
+        private ObservableList<PersonModel> editablePersons;
+
+        /// <summary>
+        /// Person for adding.
+        /// </summary>
+        private PersonModel person;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainPageViewModel"/> class.
         /// </summary>
         public MainPageViewModel()
         {
-            this.AddPersonCommand = new RelayCommand(async execute => await this.AddUserAsync());
-            this.RemovePersonCommand = new RelayCommand(async execute => await this.RemovePersonAsync(execute));
-            this.EditPersonCommand = new RelayCommand(this.EditPerson);
-            this.SaveChangesCommand = new RelayCommand(this.SaveChanges);
-            this.DiscardChangesCommand = new RelayCommand(this.DiscardChanges);
+            this.personActionHandler = new PersonActionHandler();
 
-            this.Model = new MainPageModel();
+            this.InitializeCommands();
+
+            this.InitializeData();
         }
 
         /// <summary>
-        /// Gets or sets model of Main Page.
+        /// Gets list of <see cref="PersonModel"/>.
         /// </summary>
-        public MainPageModel Model
+        [JsonProperty]
+        public ObservableList<PersonModel> Persons
         {
-            get => this.model;
+            get => this.persons;
+            private set
+            {
+                if (this.persons != value)
+                {
+                    this.persons = value;
+                    this.NotifyPropertyChanged();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets list of <see cref="PersonModel"/> in edit mode.
+        /// </summary>
+        [JsonProperty]
+        public ObservableList<PersonModel> EditablePersons
+        {
+            get => this.editablePersons;
+            private set
+            {
+                if (this.editablePersons != value)
+                {
+                    this.editablePersons = value;
+                    this.NotifyPropertyChanged();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets person for adding.
+        /// </summary>
+        [JsonProperty]
+        public PersonModel Person
+        {
+            get => this.person;
             set
             {
-                if (this.model != value)
+                if (this.person != value)
                 {
-                    this.model = value;
+                    this.person = value;
                     this.NotifyPropertyChanged();
                 }
             }
@@ -54,54 +102,52 @@ namespace DataTableProj.ViewModels
         /// <summary>
         /// Gets command for adding user.
         /// </summary>
-        public RelayCommand AddPersonCommand { get; }
+        public RelayCommand AddPersonCommand { get; private set; }
 
         /// <summary>
         /// Gets command for deleting user.
         /// </summary>
-        public RelayCommand RemovePersonCommand { get; }
+        public RelayCommand RemovePersonCommand { get; private set; }
 
         /// <summary>
         /// Gets command for editing user.
         /// </summary>
-        public RelayCommand EditPersonCommand { get; }
+        public RelayCommand EditPersonCommand { get; private set; }
 
         /// <summary>
         /// Gets command for saving changes in editing.
         /// </summary>
-        public RelayCommand SaveChangesCommand { get; }
+        public RelayCommand SaveChangesCommand { get; private set; }
 
         /// <summary>
         /// Gets command for discarding changes in editing.
         /// </summary>
-        public RelayCommand DiscardChangesCommand { get; }
+        public RelayCommand DiscardChangesCommand { get; private set; }
+
+        /// <summary>
+        /// Method for copying data from other model.
+        /// </summary>
+        /// <param name="model"><see cref="MainPageViewModel"/>.</param>
+        public void CopyFrom(MainPageViewModel model)
+        {
+            this.Person = model.person;
+
+            this.EditablePersons = model.editablePersons;
+
+            this.Persons = model.persons;
+        }
 
         /// <summary>
         /// Method for adding person to list.
         /// </summary>
         private async Task AddUserAsync()
         {
-            if (string.IsNullOrWhiteSpace(this.Model.Person.FirstName) || string.IsNullOrWhiteSpace(this.Model.Person.LastName))
+            var isCorrect = await this.personActionHandler.CheckPersonAsync(this.Person);
+
+            if (isCorrect)
             {
-                Log.Information("First name or Last name were empty:\nFirstName: {FirstName}\n\nLastName: {LastName}", this.Model.Person.FirstName, this.Model.Person.LastName);
-
-                var dialog = new InputErrorDialog();
-
-                await dialog.ShowAsync();
-
-                return;
+                this.personActionHandler.Add(this.Persons, this.Person);
             }
-
-            Log.Information("Adding user...");
-
-            var newPerson = this.Model.Person.Clone() as PersonModel;
-
-            this.Model.Persons.Add(newPerson);
-
-            this.Model.Person.FirstName = string.Empty;
-            this.Model.Person.LastName = string.Empty;
-
-            Log.Information("User added: {newPerson}", newPerson);
         }
 
         /// <summary>
@@ -110,15 +156,9 @@ namespace DataTableProj.ViewModels
         /// <param name="sender">Object, which was sent.</param>
         private async Task RemovePersonAsync(object sender)
         {
-            Log.Information("Removing person...");
+            var model = (PersonModel)sender;
 
-            var person = (PersonModel)sender;
-
-            var dialog = new DeleteConfirmationDialog(() => this.Model.Persons.Remove(person));
-
-            await dialog.ShowAsync();
-
-            Log.Information("Person removed: {person}", person);
+            await this.personActionHandler.RemoveAsync(this.Persons, model);
         }
 
         /// <summary>
@@ -127,17 +167,9 @@ namespace DataTableProj.ViewModels
         /// <param name="sender">Object, which was sent.</param>
         private void EditPerson(object sender)
         {
-            Log.Information("Enabling Edit Mode for row...");
+            var model = (PersonModel)sender;
 
-            var person = (PersonModel)sender;
-
-            person.IsEditing = true;
-
-            var clonedPerson = person.Clone() as PersonModel;
-
-            this.model.EditablePersons.Add(clonedPerson);
-
-            Log.Information("Edit mode activated for person: {person}", person);
+            this.personActionHandler.Edit(this.EditablePersons, model);
         }
 
         /// <summary>
@@ -146,17 +178,9 @@ namespace DataTableProj.ViewModels
         /// <param name="sender">Object, which was sent.</param>
         private void SaveChanges(object sender)
         {
-            Log.Information("Saving changes...");
+            var model = (PersonModel)sender;
 
-            var person = (PersonModel)sender;
-
-            person.IsEditing = false;
-
-            var index = this.model.EditablePersons.FindIndex(editablePerson => editablePerson.Id == person.Id);
-
-            this.model.EditablePersons.RemoveAt(index);
-
-            Log.Information("Saved person: {person}", person);
+            this.personActionHandler.Save(this.EditablePersons, model);
         }
 
         /// <summary>
@@ -165,20 +189,37 @@ namespace DataTableProj.ViewModels
         /// <param name="sender">Object, which was sent.</param>
         private void DiscardChanges(object sender)
         {
-            Log.Information("Discarding changes...");
+            var model = (PersonModel)sender;
 
-            var person = (PersonModel)sender;
+            this.personActionHandler.Discard(this.EditablePersons, model);
+        }
 
-            Log.Information("Person for discarding: {person}", person);
+        /// <summary>
+        /// Method for initializing commands.
+        /// </summary>
+        private void InitializeCommands()
+        {
+            this.AddPersonCommand = new RelayCommand(async execute => await this.AddUserAsync());
 
-            person.IsEditing = false;
+            this.RemovePersonCommand = new RelayCommand(async execute => await this.RemovePersonAsync(execute));
 
-            var originalPerson = this.model.EditablePersons.First(editablePerson => editablePerson.Id == person.Id);
+            this.EditPersonCommand = new RelayCommand(this.EditPerson);
 
-            person.FirstName = originalPerson.FirstName;
-            person.LastName = originalPerson.LastName;
+            this.SaveChangesCommand = new RelayCommand(this.SaveChanges);
 
-            Log.Information("Person renewed: {originalPerson}", originalPerson);
+            this.DiscardChangesCommand = new RelayCommand(this.DiscardChanges);
+        }
+
+        /// <summary>
+        /// Method for initializing data objects.
+        /// </summary>
+        private void InitializeData()
+        {
+            this.persons = new ObservableList<PersonModel>();
+
+            this.editablePersons = new ObservableList<PersonModel>();
+
+            this.Person = new PersonModel();
         }
     }
 }

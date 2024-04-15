@@ -4,13 +4,13 @@ namespace DataTableProj.Services.Serializers
 {
     using System;
     using System.Threading.Tasks;
-    using DataTableProj.Models;
+    using DataTableProj.ViewModels;
     using Newtonsoft.Json;
     using Serilog;
     using Windows.Storage;
 
     /// <summary>
-    /// Service for serializing / deserializing JSON model.
+    /// Service for serializing / deserializing JSON view model.
     /// </summary>
     public class JsonSerializerService
     {
@@ -28,18 +28,18 @@ namespace DataTableProj.Services.Serializers
         }
 
         /// <summary>
-        /// Method for deserialization of <see cref="MainPageModel"/>.
+        /// Method for deserialization of <see cref="MainPageViewModel"/>.
         /// </summary>
         /// <param name="file">File to read saved app data.</param>
-        /// <returns>Deserialized <see cref="MainPageModel"/>.</returns>
+        /// <returns>Deserialized <see cref="MainPageViewModel"/>.</returns>
         /// <exception cref="Exception">Exception thrown, when deserializing isn't successful.</exception>
-        public async Task<MainPageModel> Deserialize(StorageFile file)
+        public async Task<MainPageViewModel> Deserialize(StorageFile file)
         {
             Log.Information("Deserializing content of file: {file}", file);
 
             var json = await FileIO.ReadTextAsync(file);
 
-            var model = JsonConvert.DeserializeObject<MainPageModel>(json, this.settings) ?? new MainPageModel();
+            var model = JsonConvert.DeserializeObject<MainPageViewModel>(json, this.settings);
 
             Log.Information("Deserialized model: {model}", model);
 
@@ -47,12 +47,12 @@ namespace DataTableProj.Services.Serializers
         }
 
         /// <summary>
-        /// Method for serialization of <see cref="MainPageModel"/>.
+        /// Method for serialization of <see cref="MainPageViewModel"/>.
         /// </summary>
-        /// <param name="model"><see cref="MainPageModel"/>.</param>
+        /// <param name="model"><see cref="MainPageViewModel"/>.</param>
         /// <param name="file">File, to save app data.</param>
         /// <returns>Completed Task.</returns>
-        public async Task Serialize(MainPageModel model, StorageFile file)
+        public async Task Serialize(MainPageViewModel model, StorageFile file)
         {
             Log.Information("Model for serialization: {model}", model);
             Log.Information("Serializing file: {file}", file);

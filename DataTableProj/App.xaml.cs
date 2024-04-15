@@ -134,7 +134,7 @@ namespace DataTableProj
 
                 var serializer = new JsonSerializerService();
 
-                await serializer.Serialize(viewModel.Model, saveFile);
+                await serializer.Serialize(viewModel, saveFile);
 
                 Log.Information("Application state was successfully saved.");
             }
@@ -171,7 +171,9 @@ namespace DataTableProj
 
                 var serializer = new JsonSerializerService();
 
-                ((MainPageViewModel)view.DataContext).Model = await serializer.Deserialize(saveFile);
+                var deserializedModel = await serializer.Deserialize(saveFile);
+
+                ((MainPageViewModel)view.DataContext).CopyFrom(deserializedModel);
             }
             catch (FileNotFoundException ex)
             {

@@ -34,13 +34,13 @@
                            Text="Write First name of Person to add"/>
 
                 <TextBox Grid.Row="1" Style="{StaticResource SmallTextBoxStyle}" 
-                         Text="{Binding Model.Person.FirstName, Mode=TwoWay}"/>
+                         Text="{Binding Person.FirstName, Mode=TwoWay}"/>
 
                 <TextBlock Grid.Row="2" Style="{StaticResource CenteredTextBlockStyle}" 
                            Text="Write Last name of person to add"/>
 
                 <TextBox Grid.Row="3" Style="{StaticResource SmallTextBoxStyle}"
-                         Text="{Binding Model.Person.LastName, Mode=TwoWay}"/>
+                         Text="{Binding Person.LastName, Mode=TwoWay}"/>
 
                 <Button Grid.Row="4" Style="{StaticResource ButtonStyle}" 
                         Command="{Binding AddPersonCommand}" Content="Add User"/>
@@ -48,7 +48,7 @@
         </Grid>
 
         <Grid Column="1">
-            <controls:DataGrid AutoGenerateColumns="False" IsReadOnly="False" ItemsSource="{Binding Model.Persons}">
+            <controls:DataGrid AutoGenerateColumns="False" IsReadOnly="False" ItemsSource="{Binding Persons}">
                 <controls:DataGrid.Columns>
                     <controls:DataGridTemplateColumn Header="First Name">
                         <controls:DataGridTemplateColumn.CellTemplate>
@@ -90,7 +90,7 @@
                                     CommandParameter="{Binding}" 
                                     Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                                    <Button Content="Discard" Command="{Binding DiscardChangesCommand, Source={StaticResource ViewModel}}" 
+                                    <Button Content="Discard" Command="{Binding DiscardChangesCommand, Source={StaticResource ViewModel}}"
                                     CommandParameter="{Binding}" 
                                     Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
