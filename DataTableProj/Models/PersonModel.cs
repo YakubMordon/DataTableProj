@@ -3,26 +3,29 @@
 namespace DataTableProj.Models
 {
     using System;
+    using System.ComponentModel;
     using System.Runtime.Serialization;
     using DataTableProj.BaseClasses;
     using Newtonsoft.Json;
+    using Serilog;
 
     /// <summary>
     /// Model for Person.
     /// </summary>
     [Serializable]
     [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
-    public class PersonModel : BaseNotifyPropertyChanged, ICloneable
+    public class PersonModel : BaseNotifyPropertyChanged, IEditableObject, ICloneable
     {
         /// <summary>
-        /// First name of person.
+        /// Current person data.
         /// </summary>
-        private string firstName;
+        private PersonData personData;
 
         /// <summary>
-        /// Last name of person.
+        /// Backup Data for user, for discarding changes, when editing.
         /// </summary>
-        private string lastName;
+        [JsonProperty]
+        private PersonData backupData;
 
         /// <summary>
         /// Value indicating whether person is now available for editing or not.
@@ -34,8 +37,11 @@ namespace DataTableProj.Models
         /// </summary>
         public PersonModel()
         {
-            this.firstName = string.Empty;
-            this.lastName = string.Empty;
+            this.personData = new PersonData
+            {
+                FirstName = string.Empty,
+                LastName = string.Empty,
+            };
         }
 
         /// <summary>
@@ -45,8 +51,11 @@ namespace DataTableProj.Models
         /// <param name="lastName">Last name of person.</param>
         public PersonModel(string firstName, string lastName)
         {
-            this.firstName = firstName;
-            this.lastName = lastName;
+            this.personData = new PersonData
+            {
+                FirstName = firstName,
+                LastName = lastName,
+            };
         }
 
         /// <summary>
@@ -61,12 +70,12 @@ namespace DataTableProj.Models
         [JsonProperty]
         public string FirstName
         {
-            get => this.firstName;
+            get => this.personData.FirstName;
             set
             {
-                if (this.firstName != value)
+                if (this.personData.FirstName != value)
                 {
-                    this.firstName = value;
+                    this.personData.FirstName = value;
                     this.NotifyPropertyChanged();
                 }
             }
@@ -78,12 +87,12 @@ namespace DataTableProj.Models
         [JsonProperty]
         public string LastName
         {
-            get => this.lastName;
+            get => this.personData.LastName;
             set
             {
-                if (this.lastName != value)
+                if (this.personData.LastName != value)
                 {
-                    this.lastName = value;
+                    this.personData.LastName = value;
                     this.NotifyPropertyChanged();
                 }
             }
@@ -101,6 +110,60 @@ namespace DataTableProj.Models
                 this.isEditing = value;
                 this.NotifyPropertyChanged();
             }
+        }
+
+        /// <inheritdoc />
+        public void BeginEdit()
+        {
+            Log.Debug("Starting BeginEdit");
+
+            if (!this.IsEditing)
+            {
+                Log.Debug("BeginEdit Data - {personData}", this.personData);
+
+                this.backupData = this.personData;
+
+                this.IsEditing = !this.IsEditing;
+            }
+
+            Log.Debug("End BeginEdit");
+        }
+
+        /// <inheritdoc />
+        public void CancelEdit()
+        {
+            Log.Debug("Starting CancelEdit");
+
+            if (this.IsEditing)
+            {
+                Log.Debug("CancelEdit Data - {backupData}", this.backupData);
+
+                this.FirstName = this.backupData.FirstName;
+                this.LastName = this.backupData.LastName;
+
+                this.IsEditing = !this.IsEditing;
+
+                this.backupData = default;
+            }
+
+            Log.Debug("End CancelEdit");
+        }
+
+        /// <inheritdoc />
+        public void EndEdit()
+        {
+            Log.Debug("Starting EndEdit");
+
+            if (this.IsEditing)
+            {
+                Log.Debug("CancelEdit Data - {personData}", this.personData);
+
+                this.backupData = default;
+
+                this.IsEditing = !this.IsEditing;
+            }
+
+            Log.Debug("End EndEdit");
         }
 
         /// <inheritdoc />
@@ -122,6 +185,22 @@ namespace DataTableProj.Models
             {
                 this.IsEditing = false;
             }
+        }
+
+        /// <summary>
+        /// Structure for saving person data.
+        /// </summary>
+        internal struct PersonData
+        {
+            /// <summary>
+            /// First name of person.
+            /// </summary>
+            internal string FirstName;
+
+            /// <summary>
+            /// Last name of person.
+            /// </summary>
+            internal string LastName;
         }
     }
 }

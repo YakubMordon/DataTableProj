@@ -27,11 +27,6 @@ namespace DataTableProj.ViewModels
         private ObservableList<PersonModel> persons;
 
         /// <summary>
-        /// List of <see cref="PersonModel"/> in edit mode.
-        /// </summary>
-        private ObservableList<PersonModel> editablePersons;
-
-        /// <summary>
         /// Person for adding.
         /// </summary>
         private PersonModel person;
@@ -60,23 +55,6 @@ namespace DataTableProj.ViewModels
                 if (this.persons != value)
                 {
                     this.persons = value;
-                    this.NotifyPropertyChanged();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets list of <see cref="PersonModel"/> in edit mode.
-        /// </summary>
-        [JsonProperty]
-        public ObservableList<PersonModel> EditablePersons
-        {
-            get => this.editablePersons;
-            private set
-            {
-                if (this.editablePersons != value)
-                {
-                    this.editablePersons = value;
                     this.NotifyPropertyChanged();
                 }
             }
@@ -132,8 +110,6 @@ namespace DataTableProj.ViewModels
         {
             this.Person = model.person;
 
-            this.EditablePersons = model.editablePersons;
-
             this.Persons = model.persons;
         }
 
@@ -169,7 +145,7 @@ namespace DataTableProj.ViewModels
         {
             var model = (PersonModel)sender;
 
-            this.personActionHandler.Edit(this.EditablePersons, model);
+            model.BeginEdit();
         }
 
         /// <summary>
@@ -180,7 +156,7 @@ namespace DataTableProj.ViewModels
         {
             var model = (PersonModel)sender;
 
-            this.personActionHandler.Save(this.EditablePersons, model);
+            model.EndEdit();
         }
 
         /// <summary>
@@ -191,7 +167,7 @@ namespace DataTableProj.ViewModels
         {
             var model = (PersonModel)sender;
 
-            this.personActionHandler.Discard(this.EditablePersons, model);
+            model.CancelEdit();
         }
 
         /// <summary>
@@ -216,8 +192,6 @@ namespace DataTableProj.ViewModels
         private void InitializeData()
         {
             this.persons = new ObservableList<PersonModel>();
-
-            this.editablePersons = new ObservableList<PersonModel>();
 
             this.Person = new PersonModel();
         }
