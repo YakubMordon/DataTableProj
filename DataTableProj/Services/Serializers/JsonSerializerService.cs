@@ -4,7 +4,7 @@ namespace DataTableProj.Services.Serializers
 {
     using System;
     using System.Threading.Tasks;
-    using DataTableProj.ViewModels;
+    using DataTableProj.DTOs;
     using Newtonsoft.Json;
     using Serilog;
     using Windows.Storage;
@@ -28,18 +28,18 @@ namespace DataTableProj.Services.Serializers
         }
 
         /// <summary>
-        /// Method for deserialization of <see cref="MainPageViewModel"/>.
+        /// Method for deserialization of <see cref="AppStateDto"/>.
         /// </summary>
         /// <param name="file">File to read saved app data.</param>
-        /// <returns>Deserialized <see cref="MainPageViewModel"/>.</returns>
+        /// <returns>Deserialized <see cref="AppStateDto"/>.</returns>
         /// <exception cref="Exception">Exception thrown, when deserializing isn't successful.</exception>
-        public async Task<MainPageViewModel> Deserialize(StorageFile file)
+        public async Task<AppStateDto> Deserialize(StorageFile file)
         {
             Log.Information("Deserializing content of file: {file}", file);
 
             var json = await FileIO.ReadTextAsync(file);
 
-            var model = JsonConvert.DeserializeObject<MainPageViewModel>(json, this.settings);
+            var model = JsonConvert.DeserializeObject<AppStateDto>(json, this.settings);
 
             Log.Information("Deserialized model: {model}", model);
 
@@ -47,12 +47,12 @@ namespace DataTableProj.Services.Serializers
         }
 
         /// <summary>
-        /// Method for serialization of <see cref="MainPageViewModel"/>.
+        /// Method for serialization of <see cref="AppStateDto"/>.
         /// </summary>
-        /// <param name="model"><see cref="MainPageViewModel"/>.</param>
+        /// <param name="model">App State for saving.</param>
         /// <param name="file">File, to save app data.</param>
         /// <returns>Completed Task.</returns>
-        public async Task Serialize(MainPageViewModel model, StorageFile file)
+        public async Task Serialize(AppStateDto model, StorageFile file)
         {
             Log.Information("Model for serialization: {model}", model);
             Log.Information("Serializing file: {file}", file);

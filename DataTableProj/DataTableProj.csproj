@@ -120,6 +120,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="BaseClasses\BaseNotifyPropertyChanged.cs" />
+    <Compile Include="DTOs\AppStateDto.cs" />
     <Compile Include="MainPageView.xaml.cs">
       <DependentUpon>MainPageView.xaml</DependentUpon>
     </Compile>

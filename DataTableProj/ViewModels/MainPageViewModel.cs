@@ -1,19 +1,17 @@
 ﻿// Copyright (c) Digital Cloud Technologies. All rights reserved.
 
+using DataTableProj.DTOs;
+
 namespace DataTableProj.ViewModels
 {
-    using System;
     using System.Threading.Tasks;
     using DataTableProj.BaseClasses;
     using DataTableProj.Models;
     using DataTableProj.Services.Helpers;
-    using Newtonsoft.Json;
-    using Serilog;
 
     /// <summary>
     /// ViewModel for <see cref="MainPageView"/>.
     /// </summary>
-    [Serializable]
     public class MainPageViewModel : BaseNotifyPropertyChanged
     {
         /// <summary>
@@ -46,7 +44,6 @@ namespace DataTableProj.ViewModels
         /// <summary>
         /// Gets list of <see cref="PersonModel"/>.
         /// </summary>
-        [JsonProperty]
         public ObservableList<PersonModel> Persons
         {
             get => this.persons;
@@ -63,7 +60,6 @@ namespace DataTableProj.ViewModels
         /// <summary>
         /// Gets or sets person for adding.
         /// </summary>
-        [JsonProperty]
         public PersonModel Person
         {
             get => this.person;
@@ -105,12 +101,12 @@ namespace DataTableProj.ViewModels
         /// <summary>
         /// Method for copying data from other model.
         /// </summary>
-        /// <param name="model"><see cref="MainPageViewModel"/>.</param>
-        public void CopyFrom(MainPageViewModel model)
+        /// <param name="model">Deserialized model.</param>
+        public void CopyFrom(AppStateDto model)
         {
-            this.Person = model.person;
+            this.Person = model.Person;
 
-            this.Persons = model.persons;
+            this.Persons = model.Persons;
         }
 
         /// <summary>

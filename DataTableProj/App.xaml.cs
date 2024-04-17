@@ -5,6 +5,7 @@ namespace DataTableProj
     using System;
     using System.IO;
     using System.Threading.Tasks;
+    using DataTableProj.DTOs;
     using DataTableProj.Services.Serializers;
     using DataTableProj.ViewModels;
     using Serilog;
@@ -132,9 +133,15 @@ namespace DataTableProj
 
                 var saveFile = await localFolder.CreateFileAsync(SaveFileName, CreationCollisionOption.ReplaceExisting);
 
+                var data = new AppStateDto
+                {
+                    Persons = viewModel.Persons,
+                    Person = viewModel.Person,
+                };
+
                 var serializer = new JsonSerializerService();
 
-                await serializer.Serialize(viewModel, saveFile);
+                await serializer.Serialize(data, saveFile);
 
                 Log.Information("Application state was successfully saved.");
             }
